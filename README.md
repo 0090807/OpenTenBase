@@ -491,7 +491,6 @@ https://docs.opentenbase.org/
 ## Who are using OpenTenBase
 Tencent
 
-
 ## License
 
 The OpenTenBase is licensed under the BSD 3-Clause License. Copyright and license information can be found in the file [LICENSE.txt](LICENSE.txt)
@@ -506,9 +505,34 @@ Thanks for all contributors here: [CONTRIBUTORS](CONTRIBUTORS.md)
 |[Special Review of Cloud Native Open Source Project Application Practice](https://www.opentenbase.org/en/event/event-post-1/)|
 
 ## Blogs and Articles
+
 |Blogs and Articles|
 |------------------|
 |[Quick Start](https://www.opentenbase.org/en/blog/01-quickstart/)|
 
 ## History
 [history_events](history_events.md)
+
+## 7. OpenHarmony 端接入说明
+
+OpenTenBase 全面兼容 PostgreSQL 通信协议，OpenHarmony 终端设备可基于协议兼容性实现数据接入，适用于物联网数据上报、边缘设备数据查询等场景。
+
+### 7.1 适用场景
+- 标准 OpenHarmony 设备（平板、智慧屏、工业终端等）：可直接通过网络访问数据库 CN 节点
+- 轻量物联网设备：推荐通过业务服务端做 HTTP 代理接入，避免端侧直接暴露数据库端口
+
+### 7.2 接入方式
+1. **TCP 直连方式（标准设备）**
+   - 原理：基于 PostgreSQL 原生协议，通过 NAPI 封装或第三方兼容库，直接连接 OpenTenBase CN 节点
+   - 连接参数与标准客户端一致：主机地址、端口（默认 15432）、数据库名、用户名、密码
+   - 注意事项：需在应用中申请网络权限，确保设备与数据库 CN 节点网络互通
+
+2. **HTTP 代理方式（推荐轻量设备使用）**
+   - 原理：端侧通过 HTTP 请求调用业务服务端接口，由服务端统一执行 SQL 并返回结果
+   - 优势：降低端侧算力开销、统一管控数据库权限、提升接入安全性
+   - 服务端可使用 Java/Python/Go 等已支持的语言对接 OpenTenBase
+
+### 7.3 注意事项
+- 目前 OpenTenBase 官方暂未提供 OpenHarmony 原生 SDK，以上为基于协议兼容性的社区接入方案
+- 生产环境建议通过服务端代理接入，不建议将数据库端口直接暴露给终端设备
+- 连接语法、SQL 语法与标准 PostgreSQL 客户端完全一致，可参考前文其他语言示例
